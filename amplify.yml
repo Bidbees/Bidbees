@@ -5,26 +5,18 @@ frontend:
       commands:
         - pwd
         - ls -la
-        - echo "Checking repository contents:"
-        - find . -maxdepth 3 -type d
-        - echo "Checking .git directory:"
-        - ls -la .git
-        - echo "Checking for .gitattributes content:"
-        - cat .gitattributes
-        - echo "Trying to access Bidder_Dashboard directly:"
-        - ls -la Bidder_Dashboard || echo "Bidder_Dashboard directory not found"
-        - echo "Using Admin_Dashboard as fallback:"
-        - cd Admin_Dashboard
+        - echo "Deploying Bidder_Dashboard:"
+        - cd Bidder_Dashboard
         - npm install
     build:
       commands:
         - npm run build
   artifacts:
-    # Admin_Dashboard outputs to dist
-    baseDirectory: Admin_Dashboard/dist
+    # Bidder_Dashboard outputs to dist/public
+    baseDirectory: Bidder_Dashboard/dist/public
     files:
       - '**/*'
   cache:
     paths:
       - node_modules/**/*
-      - Admin_Dashboard/node_modules/**/*
+      - Bidder_Dashboard/node_modules/**/*
