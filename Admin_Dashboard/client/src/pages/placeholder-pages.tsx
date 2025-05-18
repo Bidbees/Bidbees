@@ -1,0 +1,95 @@
+import React from 'react';
+import { Box, Typography, Paper, Alert, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Construction as ConstructionIcon } from '@mui/icons-material';
+
+// Reusable placeholder component for pages that are not yet implemented
+const PlaceholderPage: React.FC<{ title: string; description?: string }> = ({ 
+  title, 
+  description = "This page is under construction and will be available soon." 
+}) => {
+  const navigate = useNavigate();
+  
+  return (
+    <Box>
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          {title}
+        </Typography>
+        <Button 
+          variant="contained" 
+          onClick={() => navigate('/')}
+        >
+          Back to Dashboard
+        </Button>
+      </Box>
+      
+      <Paper 
+        sx={{ 
+          p: 4, 
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          minHeight: '300px',
+          justifyContent: 'center'
+        }}
+      >
+        <ConstructionIcon sx={{ fontSize: 80, color: 'warning.main', mb: 2 }} />
+        <Typography variant="h5" gutterBottom>
+          Under Construction
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600, mb: 3 }}>
+          {description}
+        </Typography>
+        <Alert severity="info" sx={{ maxWidth: 600 }}>
+          This page is part of the Admin Dashboard implementation based on the BidBees microservices architecture plan.
+        </Alert>
+      </Paper>
+    </Box>
+  );
+};
+
+// Individual placeholder pages
+export const SystemHealthPage: React.FC = () => (
+  <PlaceholderPage 
+    title="System Health" 
+    description="This page will display detailed system health metrics, service status, and performance indicators across the microservices architecture."
+  />
+);
+
+export const SupportTicketsPage: React.FC = () => (
+  <PlaceholderPage 
+    title="Support Tickets" 
+    description="This page will provide a comprehensive interface for managing support tickets, including assignment, prioritization, and resolution tracking."
+  />
+);
+
+export const FinancialPage: React.FC = () => (
+  <PlaceholderPage 
+    title="Financial Dashboard" 
+    description="This page will provide financial analytics, transaction monitoring, and revenue reporting functionality for platform administrators."
+  />
+);
+
+export const ContentModerationPage: React.FC = () => (
+  <PlaceholderPage 
+    title="Content Moderation" 
+    description="This page will provide tools for reviewing and moderating user-generated content, including approval workflows and violation management."
+  />
+);
+
+export const SettingsPage: React.FC = () => (
+  <PlaceholderPage 
+    title="System Settings" 
+    description="This page will allow administrators to configure system settings, manage email templates, notification preferences, and feature flags."
+  />
+);
+
+export default {
+  SystemHealthPage,
+  SupportTicketsPage,
+  FinancialPage,
+  ContentModerationPage,
+  SettingsPage
+};

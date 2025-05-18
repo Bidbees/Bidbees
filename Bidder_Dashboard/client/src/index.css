@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 60 4.8% 95.9%;
+  --secondary-foreground: 24 9.8% 10%;
+  --accent: 60 4.8% 95.9%;
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 20 14.3% 4.1%;
+  --radius: 0.5rem;
+
+  /* Dashboard-specific custom colors */
+  --dashboard-bg: 207 53% 21%;
+  --card-bg: 207 48% 28%;
+  --card-bg-light: 207 39% 40%;
+  --accent-green: 122 54% 49%;
+  --accent-green-dark: 122 42% 39%;
+  --accent-blue: 207 90% 54%;
+  --accent-orange: 36 100% 50%;
+  --accent-red: 0 73% 61%;
+  --text-primary: 0 0% 100%;
+  --text-secondary: 214 46% 85%;
+  --chart-1: 36 100% 50%;
+  --chart-2: 122 54% 49%;
+  --chart-3: 207 90% 54%;
+  --chart-4: 0 73% 61%;
+  --chart-5: 262 52% 47%;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+
+  /* Keep dashboard colors in dark mode */
+  --dashboard-bg: 207 53% 21%;
+  --card-bg: 207 48% 28%;
+  --card-bg-light: 207 39% 40%;
+  --accent-green: 122 54% 49%;
+  --accent-green-dark: 122 42% 39%;
+  --accent-blue: 207 90% 54%;
+  --accent-orange: 36 100% 50%;
+  --accent-red: 0 73% 61%;
+  --text-primary: 0 0% 100%;
+  --text-secondary: 214 46% 85%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-dashboard-bg text-text-primary font-sans antialiased;
+  }
+}
+
+.bg-dashboard-bg {
+  background-color: hsl(var(--dashboard-bg));
+}
+
+.bg-card-bg {
+  background-color: hsl(var(--card-bg));
+}
+
+.bg-card-bg-light {
+  background-color: hsl(var(--card-bg-light));
+}
+
+.bg-accent-green {
+  background-color: hsl(var(--accent-green));
+}
+
+.bg-accent-blue {
+  background-color: hsl(var(--accent-blue));
+}
+
+.bg-accent-orange {
+  background-color: hsl(var(--accent-orange));
+}
+
+.bg-accent-red {
+  background-color: hsl(var(--accent-red));
+}
+
+.text-text-primary {
+  color: hsl(var(--text-primary));
+}
+
+.text-text-secondary {
+  color: hsl(var(--text-secondary));
+}
+
+.text-accent-green {
+  color: hsl(var(--accent-green));
+}
+
+.text-accent-blue {
+  color: hsl(var(--accent-blue));
+}
+
+.text-accent-orange {
+  color: hsl(var(--accent-orange));
+}
+
+.text-accent-red {
+  color: hsl(var(--accent-red));
+}
+
+.border-card-bg-light {
+  border-color: hsl(var(--card-bg-light));
+}
+
+.hover\:bg-accent-blue-dark:hover {
+  background-color: hsl(207, 90%, 45%);
+}
+
+.hover\:bg-accent-green-dark:hover {
+  background-color: hsl(var(--accent-green-dark));
+}
+
+.hover\:bg-accent-orange-dark:hover {
+  background-color: hsl(36, 100%, 45%);
+}
+
+.hover\:bg-accent-red-dark:hover {
+  background-color: hsl(0, 73%, 55%);
+}
+
+.beige-bg {
+  background-color: #f5e8d0;
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--card-bg));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--card-bg-light));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(207, 39%, 50%);
+}
+
+.mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib {
+  display: none !important;
+}

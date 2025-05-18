@@ -1,0 +1,818 @@
+﻿Okay, this is a complex UI, and creating an exact pixel-perfect, fully functional replica with backend integration in a single response is a massive undertaking.
+However, I can provide you with a solid structural foundation using React, Tailwind CSS for styling (which is excellent for dashboards like this), and Mapbox GL JS for the map. This code will give you the components and layout, which you can then populate with data from your Node.js backend.
+Key Assumptions & Approach:
+1. Styling: We'll use Tailwind CSS for rapid UI development. It's very well-suited for this kind of layout.
+2. Icons: We'll use react-icons for iconography.
+3. Map: We'll use mapbox-gl directly.
+4. Data: The components will be structured to receive data via props. You'll need to implement the Node.js backend and fetch logic yourself.
+5. Interactivity: Basic button structures will be there, but click handlers will mostly be placeholders.
+6. Exactness: Some minor visual details (like exact shades, custom progress bars) might need fine-tuning, but the layout and component structure will be very close.
+Project Setup (Do this first):
+Create React App:
+npx create-react-app bidder-dashboard
+1. cd bidder-dashboard
+2. Use code with caution. Bash
+3. Install Dependencies:
+npm install tailwindcss postcss autoprefixer mapbox-gl react-icons
+4. npm install --save-dev @tailwindcss/forms # Optional, but good for form elements
+5. Use code with caution. Bash
+6. 7. Initialize Tailwind CSS:
+npx tailwindcss init -p
+8. Use code with caution. Bash
+9. This creates tailwind.config.js and postcss.config.js.
+Configure tailwind.config.js:
+// tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        'dashboard-bg': '#1A3A53', // Main dark background
+        'card-bg': '#244C6A',     // Card background
+        'card-bg-light': '#3E6B8E', // Lighter card variant (e.g. tenders near you)
+        'accent-green': '#4CAF50',
+        'accent-green-dark': '#388E3C',
+        'accent-blue': '#2196F3',
+        'accent-orange': '#FF9800',
+        'accent-red': '#F44336',
+        'text-primary': '#FFFFFF',
+        'text-secondary': '#B0C4DE', // Lighter text
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'], // Assuming a clean sans-serif font
+      },
+    },
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
+   10. }
+   11. Use code with caution. JavaScript
+   12. Add Tailwind directives to src/index.css:
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  @apply bg-dashboard-bg text-text-primary antialiased;
+  font-family: 'Inter', sans-serif; /* Make sure to import Inter or choose another font */
+}
+
+
+/* Custom scrollbar (optional, but often nice for dashboards) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #244C6A; /* card-bg */
+}
+::-webkit-scrollbar-thumb {
+  background: #3E6B8E; /* card-bg-light */
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4A78A0;
+   13. }
+   14. Use code with caution. Css
+   15. You might want to add a Google Font like 'Inter' to your public/index.html or import it in index.css.
+Component Structure (Inside src/):
+src/
+├── components/
+│   ├── Header.jsx
+│   ├── WelcomeCard.jsx
+│   ├── TenderListCard.jsx
+│   ├── QuotesCard.jsx
+│   ├── TenderNotificationCard.jsx
+│   ├── MapCard.jsx
+│   ├── BeeTasksCard.jsx
+│   ├── AnalyticsCard.jsx
+│   ├── WinRateCard.jsx
+│   ├── QuotesSummaryCard.jsx
+│   ├── SpendingCard.jsx
+│   ├── DisputeCard.jsx
+│   └── common/
+│       └── Card.jsx        // A generic card wrapper if needed
+│       └── ProgressBar.jsx // For circular progress
+├── App.js
+├── index.css
+└── index.js
+Use code with caution. 
+Now, let's create the components:
+src/App.js (Main Dashboard Layout)
+// src/App.js
+import React from 'react';
+import Header from './components/Header';
+import WelcomeCard from './components/WelcomeCard';
+import TenderListCard from './components/TenderListCard';
+import QuotesCard from './components/QuotesCard';
+import TenderNotificationCard from './components/TenderNotificationCard';
+import MapCard from './components/MapCard';
+import BeeTasksCard from './components/BeeTasksCard';
+import AnalyticsCard from './components/AnalyticsCard';
+import WinRateCard from './components/WinRateCard';
+import QuotesSummaryCard from './components/QuotesSummaryCard';
+import SpendingCard from './components/SpendingCard';
+import DisputeCard from './components/DisputeCard';
+import 'mapbox-gl/dist/mapbox-gl.css'; // Import Mapbox CSS
+
+
+// You'll need to get your own Mapbox access token
+const MAPBOX_ACCESS_TOKEN = 'YOUR_MAPBOX_ACCESS_TOKEN'; // IMPORTANT!
+
+
+function App() {
+  // Mock data - replace with data from your backend
+  const userData = {
+    name: 'Thabo',
+    profileComplete: 75,
+    winStreak: 3,
+  };
+
+
+  const tenderData = {
+    title: 'Construction in Eastern Cape',
+    status: '70 Mid',
+    issuer: 'Issuer 30',
+    winChance: 80,
+    lagngiacts: 'arore', // Assuming this is placeholder text
+    competitor: '#75.9 won 5 similar tenders',
+  };
+
+
+  const quoteData = {
+    id: '#4156',
+    amount: 'R10,000',
+    delayIncrease: '1%',
+    submissionId: '#709',
+    submissionRisk: 'high riski',
+  };
+
+
+  const mapMarkers = [
+    { lng: 22.9375, lat: -28.7282, type: 'green', popupText: 'Opportunity A' }, // Example Central SA
+    { lng: 24.9923, lat: -29.1007, type: 'yellow', popupText: 'Opportunity B' },
+    { lng: 28.2293, lat: -25.7479, type: 'red', popupText: 'Opportunity C - Pretoria' }, // Pretoria
+    { lng: 29.4627, lat: -23.8978, type: 'green', popupText: 'Limpopo, view this RFQ' }, // Limpopo area
+    { lng: 18.4241, lat: -33.9249, type: 'yellow', popupText: 'Opportunity D - Cape Town' }, // Cape Town
+    { lng: 31.0218, lat: -29.8587, type: 'green', popupText: 'Opportunity E - Durban' }, // Durban
+  ];
+
+
+
+
+  return (
+    <div className="min-h-screen bg-dashboard-bg p-4 space-y-4">
+      <Header userName={userData.name} profileComplete={userData.profileComplete} />
+
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Column 1 (Left) */}
+        <div className="lg:col-span-3 space-y-4">
+          <WelcomeCard userName={userData.name} winStreak={userData.winStreak} progress={75} />
+          <TenderListCard tender={tenderData} />
+          <QuotesCard quote={quoteData} />
+        </div>
+
+
+        {/* Column 2 (Center) */}
+        <div className="lg:col-span-6 space-y-4">
+          <TenderNotificationCard profileComplete={75} />
+          <MapCard accessToken={MAPBOX_ACCESS_TOKEN} markers={mapMarkers} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <BeeTasksCard />
+            <AnalyticsCard />
+          </div>
+        </div>
+
+
+        {/* Column 3 (Right) */}
+        <div className="lg:col-span-3 space-y-4">
+          <WinRateCard />
+          <QuotesSummaryCard />
+          <SpendingCard />
+          <DisputeCard />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+export default App;
+Use code with caution. Jsx
+src/components/common/ProgressBar.jsx (For circular progress)
+This is a simplified SVG progress bar. You might want a library for a fancier one.
+// src/components/common/ProgressBar.jsx
+import React from 'react';
+
+
+const CircularProgressBar = ({ percentage, size = 100, strokeWidth = 10 }) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const offset = circumference - (percentage / 100) * circumference;
+
+
+  return (
+    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="transform -rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="#3E6B8E" // card-bg-light or a neutral track color
+          strokeWidth={strokeWidth}
+          fill="transparent"
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="#FF9800" // accent-orange or your progress color
+          strokeWidth={strokeWidth}
+          fill="transparent"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+        />
+      </svg>
+      <span className="absolute text-white font-semibold text-lg">
+        {percentage}%
+      </span>
+    </div>
+  );
+};
+
+
+export default CircularProgressBar;
+Use code with caution. Jsx
+src/components/Header.jsx
+// src/components/Header.jsx
+import React from 'react';
+import { FiChevronDown, FiUser } from 'react-icons/fi'; // Example icons
+
+
+const Header = ({ userName, profileComplete }) => {
+  return (
+    <div className="flex justify-between items-center p-4 bg-card-bg rounded-lg shadow-md">
+      <div className="text-xl font-semibold text-text-primary">Welcome, {userName}!</div>
+      <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-1 text-sm text-text-secondary cursor-pointer hover:text-text-primary">
+          {/* Using a simple div for the "75% Complete" for now. You can add an icon. */}
+          <div className="w-3 h-3 bg-accent-green rounded-full"></div>
+          <span>{profileComplete}% Complete</span>
+          <FiChevronDown />
+        </div>
+        <div className="text-xl font-semibold text-text-primary">Bidder Dashboard</div>
+        <div className="flex items-center space-x-2 text-sm text-text-secondary cursor-pointer hover:text-text-primary">
+          <span>Eh</span> {/* Placeholder for language/currency */}
+          <span>2</span>
+          <FiUser className="w-5 h-5" />
+          <FiChevronDown />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+export default Header;
+Use code with caution. Jsx
+src/components/WelcomeCard.jsx
+// src/components/WelcomeCard.jsx
+import React from 'react';
+import CircularProgressBar from './common/ProgressBar'; // Make sure path is correct
+
+
+const WelcomeCard = ({ userName, winStreak, progress }) => {
+  return (
+    <div className="bg-card-bg p-6 rounded-lg shadow-md flex justify-between items-center">
+      <div>
+        <h2 className="text-2xl font-bold text-text-primary">Welcome, {userName}!</h2>
+        <p className="text-accent-green font-semibold">{winStreak} Win Streak!</p>
+      </div>
+      <CircularProgressBar percentage={progress} size={80} strokeWidth={8} />
+    </div>
+  );
+};
+
+
+export default WelcomeCard;
+Use code with caution. Jsx
+src/components/TenderListCard.jsx
+// src/components/TenderListCard.jsx
+import React from 'react';
+import { FiBriefcase, FiHeart, FiChevronDown, FiFilter } from 'react-icons/fi';
+
+
+const TenderListCard = ({ tender }) => {
+  return (
+    <div className="bg-card-bg p-4 rounded-lg shadow-md">
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center space-x-2 text-text-secondary">
+          {/* Sort Wiseta # Sort | Sort Filters */}
+          <button className="text-sm hover:text-text-primary">Sort wiseta #</button>
+          <button className="flex items-center text-sm p-1 bg-card-bg-light rounded hover:bg-opacity-80">
+            Sort <FiChevronDown className="ml-1" />
+          </button>
+          <button className="flex items-center text-sm p-1 bg-card-bg-light rounded hover:bg-opacity-80">
+            <FiFilter className="mr-1" /> Sort Filters
+          </button>
+        </div>
+      </div>
+
+
+      <div className="bg-card-bg-light p-4 rounded-lg">
+        <div className="flex justify-between items-start mb-2">
+          <div className="flex items-center space-x-2">
+            <FiBriefcase className="text-accent-orange w-5 h-5" />
+            <span className="text-text-secondary text-sm">Construction</span>
+          </div>
+          <FiHeart className="text-text-secondary hover:text-accent-red cursor-pointer w-5 h-5" />
+        </div>
+
+
+        <h3 className="text-lg font-semibold text-text-primary mb-1">{tender.title}</h3>
+        
+        <div className="flex justify-between items-center mb-3">
+            <span className={`text-sm px-2 py-1 rounded ${
+                tender.status.includes("Mid") ? 'bg-accent-orange text-white' : 
+                tender.status.includes("Low") ? 'bg-accent-green text-white' : 
+                'bg-accent-red text-white' // Default or High
+            }`}>
+                {tender.status} <FiChevronDown className="inline-block ml-1" />
+            </span>
+            <span className="text-text-secondary text-sm">Issuer {tender.issuer}</span>
+        </div>
+
+
+
+
+        <div className="flex justify-between items-center text-sm mb-4">
+          <div>
+            <p className="text-accent-green text-xl font-bold">{tender.winChance}%</p>
+            <p className="text-text-secondary">Win Chance</p>
+          </div>
+          <div>
+            <p className="text-text-primary">{tender.issuer}</p> {/* Reusing issuer, adapt if different data */}
+            <p className="text-text-secondary">{tender.lagngiacts}</p>
+          </div>
+        </div>
+
+
+        <div className="flex justify-between items-center">
+          <p className="text-xs text-text-secondary">{tender.competitor}</p>
+          <button className="bg-accent-blue hover:bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-lg">
+            Create RFQ
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+export default TenderListCard;
+Use code with caution. Jsx
+src/components/QuotesCard.jsx
+// src/components/QuotesCard.jsx
+import React from 'react';
+import { FiArrowUp, FiCheckCircle } from 'react-icons/fi'; // Example icons
+
+
+const QuotesCard = ({ quote }) => {
+  return (
+    <div className="bg-card-bg p-4 rounded-lg shadow-md">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-lg font-semibold text-text-primary">Quotes</h3>
+        <button className="bg-accent-red text-white text-xs font-semibold py-1 px-3 rounded-full flex items-center">
+          Risk <FiArrowUp className="ml-1" />
+        </button>
+      </div>
+
+
+      <div className="bg-card-bg-light p-4 rounded-lg mb-3">
+        <div className="flex justify-between items-center mb-2">
+          <h4 className="text-md font-semibold text-text-primary">Supplier {quote.id}</h4>
+          <button className="bg-accent-green text-white text-xs font-semibold py-1 px-3 rounded-full flex items-center">
+            <FiCheckCircle className="mr-1" /> Risk <FiArrowUp className="ml-1" />
+          </button>
+        </div>
+        <p className="text-xl font-bold text-text-primary">{quote.amount} <span className="text-accent-green text-xs">Delay increase risk {quote.delayIncrease}</span></p>
+        <p className="text-text-secondary text-sm mb-1">Negotiate</p>
+        
+        <div className="flex justify-between items-center mt-3">
+          <p className="text-text-secondary text-sm">Negotiate faster delivery</p>
+          <button className="bg-accent-blue hover:bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-lg">
+            Select
+          </button>
+        </div>
+      </div>
+
+
+      <p className="text-xs text-text-secondary">Submitt # {quote.submissionId} <span className="text-accent-red">{quote.submissionRisk}</span></p>
+    </div>
+  );
+};
+
+
+export default QuotesCard;
+Use code with caution. Jsx
+src/components/TenderNotificationCard.jsx
+// src/components/TenderNotificationCard.jsx
+import React from 'react';
+import { FiBell } from 'react-icons/fi'; // Example
+
+
+const TenderNotificationCard = ({ profileComplete }) => {
+  return (
+    <div className="bg-card-bg-light p-4 rounded-lg shadow-md flex justify-between items-center">
+      <div className="flex items-center">
+        <div className="bg-accent-green p-2 rounded-full mr-3">
+          {/* Placeholder for the waving hand/profile icon in image. Using Bell for now */}
+          <FiBell className="text-white w-5 h-5" /> 
+        </div>
+        <div>
+          <p className="text-text-primary font-semibold">{profileComplete}% Prof, scccomplete</p> {/* Assuming 'scccomplete' is placeholder text */}
+          <p className="text-text-primary text-lg font-bold">Tenders available near you!</p>
+        </div>
+      </div>
+      <button className="bg-accent-blue hover:bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-lg">
+        View Tenders
+      </button>
+    </div>
+  );
+};
+
+
+export default TenderNotificationCard;
+Use code with caution. Jsx
+src/components/MapCard.jsx
+// src/components/MapCard.jsx
+import React, { useRef, useEffect, useState } from 'react';
+import mapboxgl from 'mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import { FiMapPin } from 'react-icons/fi'; // Placeholder for custom marker icon
+
+
+const MapCard = ({ accessToken, markers }) => {
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+  const [lng] = useState(24.37); // Approx center of SA
+  const [lat] = useState(-28.5);  // Approx center of SA
+  const [zoom] = useState(4.5);
+
+
+  useEffect(() => {
+    if (map.current || !accessToken) return; // Initialize map only once and if token exists
+    mapboxgl.accessToken = accessToken;
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/dark-v11', // Dark theme to match dashboard
+      center: [lng, lat],
+      zoom: zoom,
+    });
+
+
+    map.current.on('load', () => {
+      markers.forEach(markerInfo => {
+        // Create a DOM element for each marker.
+        const el = document.createElement('div');
+        el.className = 'marker';
+        el.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="${
+            markerInfo.type === 'green' ? '%234CAF50' : // accent-green
+            markerInfo.type === 'yellow' ? '%23FF9800' : // accent-orange
+            '%23F44336' // accent-red
+        }"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>')`;
+        el.style.width = `24px`;
+        el.style.height = `24px`;
+        el.style.backgroundSize = '100%';
+        el.style.cursor = 'pointer';
+
+
+        // Add marker to map
+        const markerInstance = new mapboxgl.Marker(el)
+          .setLngLat([markerInfo.lng, markerInfo.lat])
+          .addTo(map.current);
+        
+        if (markerInfo.popupText && markerInfo.popupText.includes("Limpopo")) {
+          // For the special "Limpopo, view this RFQ" button, create a custom HTML element overlay
+          // This is a simplified version. For a true map popup, use mapboxgl.Popup
+          const limpopoButton = document.createElement('button');
+          limpopoButton.className = 'absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-accent-blue text-white text-xs py-1.5 px-3 rounded-md shadow-lg hover:bg-blue-700';
+          limpopoButton.innerText = markerInfo.popupText;
+          limpopoButton.style.zIndex = '10'; // Ensure it's above map elements if needed
+          // This simple approach adds it to the map card, not directly tied to the marker on map.
+          // For a popup *on* the map at the marker, use mapboxgl.Popup().setLngLat().setHTML().addTo(map.current);
+          // For this example, we'll add it below the map div, but styled to appear like it's on it.
+          // This is tricky to do well without making the map container relative and the button absolute within it.
+          // The request was "Limpopo, view this RFQ" on the map.
+          // A simpler way is to create a Mapbox Popup on that specific marker.
+           new mapboxgl.Popup({ 
+             closeButton: false, 
+             closeOnClick: false,
+             offset: 25, // offset from the marker
+             anchor: 'bottom',
+             className: 'limpopo-popup' // For custom styling
+            })
+            .setLngLat([markerInfo.lng, markerInfo.lat])
+            .setHTML(`<button class="bg-accent-blue text-white text-xs py-1.5 px-3 rounded-md shadow-lg hover:bg-blue-700">${markerInfo.popupText}</button>`)
+            .addTo(map.current);
+        }
+      });
+    });
+
+
+     // Add map controls
+    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    // map.current.addControl(new mapboxgl.GeolocateControl({ // If you want geolocation
+    //   positionOptions: { enableHighAccuracy: true },
+    //   trackUserLocation: true,
+    //   showUserHeading: true
+    // }), 'top-right');
+
+
+    // Clean up on unmount
+    return () => map.current.remove();
+  }, [accessToken, lat, lng, zoom, markers]); // Only re-run if these change
+
+
+  return (
+    <div className="bg-card-bg p-1 rounded-lg shadow-md relative">
+      <div className="absolute top-2 right-2 z-10 bg-white p-1.5 rounded shadow">
+        <FiMapPin className="text-gray-700 w-5 h-5" /> {/* Placeholder for the location icon */}
+      </div>
+      <div ref={mapContainer} className="h-96 rounded-md" />
+      {/* The "Limpopo, view this RFQ" button can be more robustly handled with Mapbox popups tied to markers */}
+      {/* Example of a button styled to look like it's on the map (if not using mapbox popup) */}
+      {/* <button className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-accent-blue text-white text-xs py-1.5 px-3 rounded-md shadow-lg hover:bg-blue-700">
+        Limpopo, view this RFQ
+      </button> */}
+       <style jsx global>{`
+        .mapboxgl-popup-content {
+          background: transparent !important;
+          padding: 0 !important;
+          box-shadow: none !important;
+        }
+        .limpopo-popup .mapboxgl-popup-tip {
+          display: none; /* Hide the default tip for this specific popup if desired */
+        }
+      `}</style>
+    </div>
+  );
+};
+
+
+export default MapCard;
+Use code with caution. Jsx
+   * Important for MapCard:
+   * Replace 'YOUR_MAPBOX_ACCESS_TOKEN' with your actual token from mapbox.com.
+   * The map style is set to mapbox://styles/mapbox/dark-v11. You can choose others.
+   * Markers are basic colored pins. You can customize them further with SVG or images.
+   * The "Limpopo, view this RFQ" is implemented as a mapboxgl.Popup attached to a specific marker. The styling ensures it looks like a button.
+   * src/components/BeeTasksCard.jsx
+// src/components/BeeTasksCard.jsx
+import React from 'react';
+
+
+const BeeTasksCard = () => {
+  return (
+    <div className="bg-card-bg p-4 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold text-text-primary mb-3">Bee Tasks</h3>
+      <div className="space-y-3">
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-text-primary">Briefing</p>
+            <div className="w-full bg-card-bg-light rounded-full h-1.5 mt-1">
+              <div className="bg-accent-orange h-1.5 rounded-full" style={{ width: '70%' }}></div>
+            </div>
+          </div>
+          <span className="text-xs bg-accent-red text-white font-semibold py-0.5 px-2 rounded-full">RBX</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-text-primary">Hire backup Bee</p>
+          <button className="bg-accent-blue hover:bg-blue-600 text-white text-xs font-semibold py-1 px-3 rounded-md">
+            Now
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+export default BeeTasksCard;
+Use code with caution. Jsx
+src/components/AnalyticsCard.jsx
+// src/components/AnalyticsCard.jsx
+import React from 'react';
+import { FiTrendingUp, FiTrendingDown } from 'react-icons/fi'; // Example icons
+
+
+const AnalyticsCard = () => {
+  return (
+    <div className="bg-card-bg p-4 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold text-text-primary mb-3">Analytics</h3>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <p className="text-text-secondary text-sm">RFQs</p>
+          <p className="text-2xl font-bold text-text-primary">20%</p>
+          {/* Simplified graph - you'd use a charting library for real graphs */}
+          <FiTrendingUp className="text-accent-green w-8 h-8 mt-1" />
+        </div>
+        <div>
+          <p className="text-text-secondary text-sm">95%</p> {/* Context missing from image, assuming it's a target/benchmark */}
+           <p className="text-2xl font-bold text-text-primary">95%</p>
+          <FiTrendingDown className="text-accent-red w-8 h-8 mt-1" />
+        </div>
+      </div>
+      <div className="mt-3">
+        <p className="text-text-secondary text-sm">Bon chance Up-10</p> {/* Placeholder based on image text */}
+        {/* Another simplified graph representation */}
+        <div className="flex items-end space-x-1 h-10 mt-1">
+            <div className="w-2 bg-accent-green" style={{height: '40%'}}></div>
+            <div className="w-2 bg-accent-green" style={{height: '60%'}}></div>
+            <div className="w-2 bg-accent-orange" style={{height: '30%'}}></div>
+            <div className="w-2 bg-accent-green" style={{height: '80%'}}></div>
+            <div className="w-2 bg-accent-red" style={{height: '50%'}}></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+export default AnalyticsCard;
+Use code with caution. Jsx
+src/components/WinRateCard.jsx
+// src/components/WinRateCard.jsx
+import React from 'react';
+import { FiShield } from 'react-icons/fi'; // Example icon
+
+
+const WinRateCard = () => {
+  return (
+    <div className="bg-card-bg-light p-4 rounded-lg shadow-md flex items-center space-x-3">
+      <FiShield className="text-accent-green w-10 h-10" />
+      <div>
+        <p className="text-text-secondary text-sm">Forestred</p> {/* Placeholder based on image */}
+        <p className="text-2xl font-bold text-text-primary">20% Win</p>
+      </div>
+    </div>
+  );
+};
+
+
+export default WinRateCard;
+Use code with caution. Jsx
+src/components/QuotesSummaryCard.jsx
+// src/components/QuotesSummaryCard.jsx
+import React from 'react';
+import { FiArrowUp, FiArrowDown } from 'react-icons/fi';
+
+
+const QuotesSummaryCard = () => {
+  return (
+    <div className="bg-card-bg p-4 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold text-text-primary mb-3">Quotes</h3>
+      <div className="space-y-3">
+        {/* Supplier */}
+        <div className="flex justify-between items-center">
+          <span className="text-text-secondary">Supplier</span>
+          <span className="text-accent-green text-sm font-semibold flex items-center">
+            + 5.05 <FiArrowUp className="ml-1" />
+          </span>
+        </div>
+        <hr className="border-card-bg-light" />
+
+
+        {/* Low */}
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <FiArrowUp className="text-accent-green mr-2" />
+            <span className="text-text-secondary">Low</span>
+          </div>
+          <span className="text-text-primary font-semibold">86 %</span>
+        </div>
+        <hr className="border-card-bg-light" />
+        
+        {/* High Win Chance */}
+        <div>
+          <p className="text-text-secondary mb-1">High Win Chance</p>
+          <div className="flex justify-between items-center">
+            <span className="text-2xl font-bold text-text-primary">20%</span>
+            <span className="text-xs text-text-secondary">Win Chance <br/> 10%</span>
+          </div>
+          <div className="w-full bg-card-bg-light rounded-full h-1.5 mt-1">
+            <div className="bg-accent-green h-1.5 rounded-full" style={{ width: '20%' }}></div>
+          </div>
+        </div>
+        <hr className="border-card-bg-light" />
+
+
+        {/* Compliance */}
+        <div className="flex justify-between items-center">
+          <span className="text-text-secondary">Compliance</span>
+          <span className="text-text-primary font-semibold">95%</span>
+        </div>
+        <div className="w-full bg-card-bg-light rounded-full h-1.5 mt-1">
+          <div className="bg-accent-green h-1.5 rounded-full" style={{ width: '95%' }}></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+export default QuotesSummaryCard;
+Use code with caution. Jsx
+src/components/SpendingCard.jsx
+// src/components/SpendingCard.jsx
+import React from 'react';
+import { FiPercent, FiTrendingUp, FiMessageSquare, FiUsers } from 'react-icons/fi'; // Example icons
+
+
+const SpendingCard = () => {
+  return (
+    <div className="bg-card-bg p-4 rounded-lg shadow-md">
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center space-x-2">
+          <FiPercent className="text-accent-blue w-5 h-5" />
+          <span className="text-text-primary font-semibold">6K</span>
+          <span className="text-text-secondary text-sm">Opon</span> {/* Placeholder based on image */}
+        </div>
+        <span className="text-text-secondary text-sm">Spended</span>
+      </div>
+      
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center space-x-2">
+          <FiTrendingUp className="text-accent-green w-5 h-5" />
+          <span className="text-text-primary font-semibold">20%</span>
+        </div>
+        {/* Placeholder for the sprout/growth icon */}
+        <FiUsers className="text-accent-green w-5 h-5" />
+      </div>
+
+
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-2">
+          {/* Placeholder for the multi-color icon */}
+          <div className="w-5 h-5 rounded-full bg-gradient-to-br from-accent-orange via-accent-red to-accent-blue"></div>
+          <span className="text-text-secondary text-sm">Raise Dicpivte</span> {/* Placeholder based on image */}
+        </div>
+        <button className="bg-accent-blue hover:bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-lg">
+          Raise Dispute
+        </button>
+      </div>
+    </div>
+  );
+};
+
+
+export default SpendingCard;
+Use code with caution. Jsx
+src/components/DisputeCard.jsx
+// src/components/DisputeCard.jsx
+import React from 'react';
+import { FiAlertTriangle, FiArchive } from 'react-icons/fi'; // Example icons
+
+
+const DisputeCard = () => {
+  return (
+    <div className="bg-card-bg p-4 rounded-lg shadow-md">
+      <div className="flex items-center space-x-2 mb-2">
+        {/* Placeholder for the equals/supplier icon */}
+        <div className="w-5 h-5 flex items-center justify-center">
+            <div className="w-4 h-0.5 bg-accent-orange mb-1"></div>
+            <div className="w-4 h-0.5 bg-accent-orange mt-1 transform rotate-180"></div>
+        </div>
+        <span className="text-text-secondary text-sm">Supplier</span>
+      </div>
+      <p className="text-xl font-bold text-text-primary mb-3">$ 456 dispute</p>
+      <button className="w-full bg-card-bg-light hover:opacity-80 text-text-primary text-sm font-semibold py-2 px-4 rounded-lg flex items-center justify-center">
+        <FiArchive className="mr-2" /> Open
+      </button>
+    </div>
+  );
+};
+
+
+export default DisputeCard;
+Use code with caution. Jsx
+To Run This:
+   1. Save all these files in their respective locations.
+   2. Make sure you've done the setup steps (npm install, tailwind init).
+   3. Replace YOUR_MAPBOX_ACCESS_TOKEN in App.js and MapCard.jsx.
+   4. Start the development server:
+npm start
+   5. Use code with caution. Bash
+   6. This will give you a very close visual and structural representation of the dashboard. You can then:
+      * Connect to Node.js Backend: Use fetch or axios in your components (likely in useEffect hooks) to get data from your Node.js API endpoints and update the state, which will then re-render the components with live data.
+      * Refine Styles: Tweak Tailwind classes for pixel-perfect alignment or custom styles in index.css if needed.
+      * Add Full Interactivity: Implement all button clicks, form submissions, and dynamic updates.
+      * Charting: For the analytics graphs, integrate a charting library like Chart.js, Recharts, or Nivo.
+      * Error Handling & Loading States: Add these for a robust application.
