@@ -9,14 +9,14 @@ frontend:
       commands:
         - npm run build
   artifacts:
-    # Bidder_Dashboard outputs to dist/public
+    # Bidder_Dashboard outputs its production build here
     baseDirectory: dist/public
     files:
       - '**/*'
   cache:
     paths:
       - node_modules/**/*
-customRules:
-  - source: "</^[^.]+$|\\/(?!.*\\.)/>"
-    target: "/index.html"
-    status: 200
+  customRules:
+    - source: "</^[^.]+$|\\/(?!.*\\.)/>"
+      target: "/index.html"
+      status: 200
