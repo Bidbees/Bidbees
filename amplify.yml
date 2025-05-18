@@ -21,11 +21,11 @@ frontend:
         - cd Admin_Dashboard
         - npm run build
   artifacts:
-    # We'll try different possible paths
-    baseDirectory: Admin_Dashboard/dist/public
+    # Admin_Dashboard outputs to dist
+    baseDirectory: Admin_Dashboard/dist
     files:
       - '**/*'
   cache:
     paths:
       - node_modules/**/*
-      - Bidder_Dashboard/node_modules/**/*
+      - Admin_Dashboard/node_modules/**/*
