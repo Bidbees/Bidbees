@@ -18,7 +18,6 @@ frontend:
         - npm install
     build:
       commands:
-        - cd Admin_Dashboard
         - npm run build
   artifacts:
     # Admin_Dashboard outputs to dist
