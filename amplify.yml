@@ -1,17 +1,22 @@
 version: 1
 frontend:
+  appRoot: Bidder_Dashboard
   phases:
     preBuild:
       commands:
-        - npm --prefix Bidder_Dashboard install
+        - npm install
     build:
       commands:
-        - npm --prefix Bidder_Dashboard run build
+        - npm run build
   artifacts:
     # Bidder_Dashboard outputs to dist/public
-    baseDirectory: Bidder_Dashboard/dist/public
+    baseDirectory: dist/public
     files:
       - '**/*'
   cache:
     paths:
-      - Bidder_Dashboard/node_modules/**/*
+      - node_modules/**/*
+customRules:
+  - source: "</^[^.]+$|\\/(?!.*\\.)/>"
+    target: "/index.html"
+    status: 200
