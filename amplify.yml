@@ -3,16 +3,22 @@ frontend:
   phases:
     preBuild:
       commands:
-        - cd Bidder_Dashboard
+        - pwd
+        - ls -la
+        - find . -type d | grep -i dashboard
+        - cd ./Bidder_Dashboard || cd Bidder_Dashboard || cd ./Bidbees/Bidder_Dashboard
         - npm install
     build:
       commands:
-        - cd Bidder_Dashboard
+        - cd ./Bidder_Dashboard || cd Bidder_Dashboard || cd ./Bidbees/Bidder_Dashboard
         - npm run build
   artifacts:
-    baseDirectory: Bidder_Dashboard/dist/public
+    # We'll try different possible paths
+    baseDirectory: dist/public
     files:
       - '**/*'
   cache:
     paths:
+      - node_modules/**/*
       - Bidder_Dashboard/node_modules/**/*
+      - */node_modules/**/*
