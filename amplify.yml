@@ -21,4 +21,3 @@ frontend:
     paths:
       - node_modules/**/*
       - Bidder_Dashboard/node_modules/**/*
-      - */node_modules/**/*
