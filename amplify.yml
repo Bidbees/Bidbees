@@ -1,0 +1,18 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd Bidder_Dashboard
+        - npm ci
+    build:
+      commands:
+        - cd Bidder_Dashboard
+        - npm run build
+  artifacts:
+    baseDirectory: Bidder_Dashboard/dist/public
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - Bidder_Dashboard/node_modules/**/*
